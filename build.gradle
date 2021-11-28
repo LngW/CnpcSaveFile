@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "0.0.4a"
+version = "0.0.4b"
 group = "com.github.mrmks.mc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "NpcSaveFile"
 
@@ -39,8 +39,6 @@ minecraft {
 
             property 'mrmks.csf.saveDump', 'D:\\Workspaces\\Minecraft\\CnpcSaveFile\\dump\\'
 
-            arg '--username miuela'
-            //jvmArgs.add('-Dfml.coreMods.load=com.github.mrmks.mc.csf.FMLPluginImpl')
         }
 
         server {

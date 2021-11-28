@@ -17,6 +17,10 @@ public class JsonUtil {
         throw new UnsupportedOperationException("This method should be replaced via asm");
     }
 
+    private static String toChar(int c) {
+        return c == -1 ? "EOF" : "'" + (char)c + "'";
+    }
+
     public static NBTTagCompound fillCompound(JsonToken token) throws IOException, JsonException {
         NBTTagCompound tag = new NBTTagCompound();
         int c = token.nextCleanSpace();
@@ -25,13 +29,13 @@ public class JsonUtil {
             while (true) {
                 String key = readKey(token);
                 c = token.nextCleanSpace();
-                if (c != ':') throw createException("Expected ':', but found '" + (char)c + "'", token);
+                if (c != ':') throw createException("Expected ':', but found " + toChar(c), token);
 
                 NBTBase value = readValue(token);
                 tag.setTag(key, value);
                 c = token.nextCleanSpace();
                 if (c == '}') break;
-                else if (c != ',') throw createException("Expected ',' or '}', but found '" + (char) c + "'", token);
+                else if (c != ',') throw createException("Expected ',' or '}', but found " + toChar(c), token);
             }
         }
         return tag;
@@ -55,7 +59,7 @@ public class JsonUtil {
             }
             return new String(Arrays.copyOf(keyWorker, index));
         }
-        throw createException("Can't parse a key, expected '\"', but found '" + (char)c + "'", token);
+        throw createException("Can't parse a key, expected '\"', but found " + toChar(c), token);
     }
 
     private static NBTBase readValue(JsonToken token) throws IOException, JsonException {
@@ -94,7 +98,7 @@ public class JsonUtil {
                         });
                         return new NBTTagIntArray(list.toIntArray());
                     }
-                } else throw createException("Expected ';' but found '" + (char)c1 + "'", token);
+                } else throw createException("Expected ';' but found " + toChar(c1), token);
             } else {
                 NBTTagList list = new NBTTagList();
                 if (c != ']') {
@@ -103,8 +107,7 @@ public class JsonUtil {
                         list.appendTag(readValue(token));
                         c = token.nextCleanSpace();
                         if (c == ']') break;
-                        else if (c == -1) throw createException("Expected ',', but found EOF", token);
-                        else if (c != ',') throw createException("Expected ',', but found '" + (char)c + "'", token);
+                        else if (c != ',') throw createException("Expected ',', but found " + toChar(c), token);
                     }
                 }
                 return list;
@@ -138,6 +141,7 @@ public class JsonUtil {
                 switch (c) {
                     case 'f': return new NBTTagFloat((float) d);
                     case 'd': return new NBTTagDouble(d);
+                    case -1: throw createException("Found EOF while parsing float number", token);
                     default: throw createException("Unexpected subfix '" + (char)c + "'", token);
                 }
             } else {
@@ -163,13 +167,10 @@ public class JsonUtil {
         boolean minus = false;
 
         if (c == '-') minus = true; else if (c >= '0' && c <= '9') prefix = c - '0';
-        else throw createException("Unexpected char '" + (char) c + "'", tk);
+        else throw createException("Unexpected char '" + (char) c + "' while parsing a number", tk);
 
-        c = tk.nextClean();
-        while (c >= '0' && c <= '9') {
-            prefix = prefix * 10 + (c - '0');
-            c = tk.nextClean();
-        }
+        while ((c = tk.nextClean()) >= '0' && c <= '9') prefix = prefix * 10 + (c - '0');
+
         tk.moveLast();
         return minus ? -prefix : prefix;
     }
