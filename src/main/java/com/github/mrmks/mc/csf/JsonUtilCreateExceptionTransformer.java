@@ -1,11 +1,7 @@
 package com.github.mrmks.mc.csf;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -16,39 +12,44 @@ public class JsonUtilCreateExceptionTransformer implements IClassTransformer {
         if (!"com.github.mrmks.mc.json.JsonUtil".equals(name)) return basicClass;
 
         ClassReader cr = new ClassReader(basicClass);
-        ClassNode cn = new ClassNode();
-        cr.accept(cn, 0);
+        ClassWriter cw = new ClassWriter(cr, 0);
+        ClassVisitor cv = new ClassVisitorImpl(cw);
 
-        cn.visitInnerClass("noppes/npcs/util/NBTJsonUtil$JsonException","noppes/npcs/util/NBTJsonUtil", "JsonException", ACC_PUBLIC | ACC_STATIC);
+        cw.visitInnerClass("noppes/npcs/util/NBTJsonUtil$JsonException","noppes/npcs/util/NBTJsonUtil", "JsonException", ACC_PUBLIC | ACC_STATIC);
 
-        for (MethodNode mn : cn.methods) {
-            if (mn.name.equals("createException")) {
-                mn.localVariables.clear();
-                mn.exceptions.clear();
-                mn.instructions.clear();
-
-                mn.visitCode();
-                Label label0 = new Label();
-                mn.visitLabel(label0);
-                mn.visitTypeInsn(NEW, "noppes/npcs/util/NBTJsonUtil$JsonException");
-                mn.visitInsn(DUP);
-                mn.visitVarInsn(ALOAD, 0);
-                mn.visitVarInsn(ALOAD, 1);
-                mn.visitMethodInsn(INVOKESPECIAL, "noppes/npcs/util/NBTJsonUtil$JsonException", "<init>", "(Ljava/lang/String;Lcom/github/mrmks/mc/json/JsonToken;)V", false);
-                mn.visitInsn(ARETURN);
-                Label label1 = new Label();
-                mn.visitLabel(label1);
-                mn.visitLocalVariable("msg", "Ljava/lang/String;", null, label0, label1, 0);
-                mn.visitLocalVariable("token", "Lcom/github/mrmks/mc/json/JsonToken;", null, label0, label1, 1);
-                mn.visitMaxs(4,2);
-                mn.visitEnd();
-                break;
-            }
-        }
-
-        ClassWriter cw = new ClassWriter(0);
-        cn.accept(cw);
+        cr.accept(cv, 0);
 
         return DumpHelper.saveDump("com.github.mrmks.mc.json.JsonUtil", cw.toByteArray());
+    }
+
+    private static class ClassVisitorImpl extends ClassVisitor {
+
+        public ClassVisitorImpl(ClassVisitor cv) {
+            super(ASM5, cv);
+        }
+
+        @Override
+        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            if ("createException".equals(name)) {
+                MethodVisitor mv = this.cv.visitMethod(access, name, desc, signature, exceptions);
+                mv.visitCode();
+                Label label0 = new Label();
+                Label label1 = new Label();
+                mv.visitLabel(label0);
+                mv.visitTypeInsn(NEW, "noppes/npcs/util/NBTJsonUtil$JsonException");
+                mv.visitInsn(DUP);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKESPECIAL, "noppes/npcs/util/NBTJsonUtil$JsonException", "<init>", "(Ljava/lang/String;Lcom/github/mrmks/mc/json/JsonToken;)V", false);
+                mv.visitInsn(ARETURN);
+                mv.visitLabel(label1);
+                mv.visitLocalVariable("msg", "Ljava/lang/String;", null, label0, label1, 0);
+                mv.visitLocalVariable("token", "Lcom/github/mrmks/mc/json/JsonToken;", null, label0, label1, 1);
+                mv.visitMaxs(4,2);
+                mv.visitEnd();
+                return null;
+            }
+            return super.visitMethod(access, name, desc, signature, exceptions);
+        }
     }
 }

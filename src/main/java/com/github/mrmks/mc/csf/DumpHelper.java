@@ -21,7 +21,7 @@ public class DumpHelper {
                 fileName = fileName.concat("\\").concat(name.replace('.','\\')).concat(".class");
             }
             try {
-                FMLLog.log.warn("Saving transformed {} to \"{}\"", name.substring(name.lastIndexOf('.') + 1), fileName);
+                FMLLog.log.warn("[CnpcSaveFile] Saving transformed {} to \"{}\"", name.substring(name.lastIndexOf('.') + 1), fileName);
                 File file = new File(fileName.substring(0, fileName.lastIndexOf('\\')));
                 if (file.exists() || file.mkdirs()) {
                     FileOutputStream fos = new FileOutputStream(fileName);
