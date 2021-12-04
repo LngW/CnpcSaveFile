@@ -1,6 +1,7 @@
 package com.github.mrmks.mc.csf;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.objectweb.asm.*;
 
 import static org.objectweb.asm.Opcodes.ASM5;
@@ -16,10 +17,12 @@ public class CnpcWriteNBTOptional implements IClassTransformer {
             private boolean f = false;
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                boolean t;
-                if (!f && ((t = "func_70039_c".equals(name)) || "writeToNBTOptional".equals(name))) {
+                if (!f) {
+                    boolean d = FMLLaunchHandler.isDeobfuscatedEnvironment();
+                    if ((d ? "writeToNBTOptional" : "func_70039_c").equals(name)) {
+                        return new MethodVisitorImpl(d ? "writeToNBTAtomically" : "func_184198_c", name, super.visitMethod(access, name, desc, signature, exceptions));
+                    }
                     f = true;
-                    return new MethodVisitorImpl(t ? "func_184198_c" : "writeToNBTAtomically", name, super.visitMethod(access, name, desc, signature, exceptions));
                 }
                 return super.visitMethod(access, name, desc, signature, exceptions);
             }
