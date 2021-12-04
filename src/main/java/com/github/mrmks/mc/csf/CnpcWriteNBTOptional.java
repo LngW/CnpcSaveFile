@@ -20,16 +20,16 @@ public class CnpcWriteNBTOptional implements IClassTransformer {
                 if (!f) {
                     boolean d = FMLLaunchHandler.isDeobfuscatedEnvironment();
                     if ((d ? "writeToNBTOptional" : "func_70039_c").equals(name)) {
+                        f = true;
                         return new MethodVisitorImpl(d ? "writeToNBTAtomically" : "func_184198_c", name, super.visitMethod(access, name, desc, signature, exceptions));
                     }
-                    f = true;
                 }
                 return super.visitMethod(access, name, desc, signature, exceptions);
             }
         };
         cr.accept(cv, 0);
 
-        return cw.toByteArray();
+        return TransformHelper.saveDump(name, cw.toByteArray());
     }
 
     private static class MethodVisitorImpl extends MethodVisitor {
