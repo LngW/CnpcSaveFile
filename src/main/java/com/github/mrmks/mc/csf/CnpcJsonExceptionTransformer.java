@@ -1,8 +1,10 @@
 package com.github.mrmks.mc.csf;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.common.FMLLog;
-import org.objectweb.asm.*;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -45,8 +47,8 @@ public class CnpcJsonExceptionTransformer implements IClassTransformer {
 
         cr.accept(cw, 0);
         
-        FMLLog.log.warn("[CnpcSaveFile] Transformed: noppes.npcs.util.NBTJsonUtil$JsonException");
+        TransformHelper.transformed(name);
 
-        return DumpHelper.saveDump("noppes.npcs.util.NBTJsonUtil$JsonException", cw.toByteArray());
+        return TransformHelper.saveDump(name, cw.toByteArray());
     }
 }

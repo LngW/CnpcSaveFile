@@ -1,10 +1,7 @@
 package com.github.mrmks.mc.csf;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.common.FMLLog;
 import org.objectweb.asm.*;
-
-import java.util.Arrays;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -19,16 +16,15 @@ public class CnpcSaveFileTransformer implements IClassTransformer {
         ClassVisitor cv = new ClassVisitorImpl(cw);
         cr.accept(cv, 0);
 
-        FMLLog.log.warn("[CnpcSaveFile] Transformed: noppes.npcs.util.NBTJsonUtil");
+        TransformHelper.transformed(name);
 
-        return DumpHelper.saveDump("noppes.npcs.util.NBTJsonUtil", cw.toByteArray());
+        return TransformHelper.saveDump(name, cw.toByteArray());
     }
 
     private static class ClassVisitorImpl extends ClassVisitor {
-        private final boolean[] f = new boolean[3];
+        private final boolean[] f = new boolean[]{false, false, false};
         public ClassVisitorImpl(ClassVisitor cv) {
             super(ASM5, cv);
-            Arrays.fill(f, false);
         }
 
         @Override
