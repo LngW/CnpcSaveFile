@@ -1,23 +1,20 @@
-package com.github.mrmks.mc.csf;
+package com.github.mrmks.mc.csf.visitor;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class CnpcJsonExceptionTransformer implements IClassTransformer {
+public class JsonExceptionClassVisitor extends ClassVisitor {
+    public JsonExceptionClassVisitor(ClassVisitor cv) {
+        super(ASM5, cv);
+    }
+
     @Override
-    public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (!"noppes.npcs.util.NBTJsonUtil$JsonException".equals(name)) return basicClass;
+    public void visitEnd() {
+        MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/String;Lcom/github/mrmks/mc/json/JsonToken;)V", null, null);
 
-        ClassReader cr = new ClassReader(basicClass);
-        ClassWriter cw = new ClassWriter(cr, 0);
-
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/String;Lcom/github/mrmks/mc/json/JsonToken;)V", null, null);
-        
         mv.visitCode();
         Label label0 = new Label();
         mv.visitLabel(label0);
@@ -45,10 +42,6 @@ public class CnpcJsonExceptionTransformer implements IClassTransformer {
         mv.visitMaxs(3, 3);
         mv.visitEnd();
 
-        cr.accept(cw, 0);
-        
-        TransformHelper.transformed(name);
-
-        return TransformHelper.saveDump(name, cw.toByteArray());
+        super.visitEnd();
     }
 }

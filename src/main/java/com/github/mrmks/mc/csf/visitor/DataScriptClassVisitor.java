@@ -1,36 +1,25 @@
-package com.github.mrmks.mc.csf;
+package com.github.mrmks.mc.csf.visitor;
 
-import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class CnpcDataScriptNoticeTransformer implements IClassTransformer {
-    @Override
-    public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (!"noppes.npcs.entity.data.DataScript".equals(name)) return basicClass;
-
-        ClassReader cr = new ClassReader(basicClass);
-        ClassWriter cw = new ClassWriter(cr, 0);
-        ClassVisitor cv = new ClassVisitor(ASM5, cw) {
-            private boolean f = false;
-            @Override
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                if (!f && "noticeString".equals(name)) {
-                    f = true;
-                    return new MethodVisitorImpl(super.visitMethod(access, name, desc, signature, exceptions));
-                } else return super.visitMethod(access, name, desc, signature, exceptions);
-            }
-        };
-
-        cr.accept(cv, 0);
-
-        return cw.toByteArray();
+public class DataScriptClassVisitor extends ClassVisitor {
+    public DataScriptClassVisitor(ClassVisitor cv) {
+        super(ASM5, cv);
     }
+
+    private boolean f = false;
+    @Override
+    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        if (!f && "noticeString".equals(name)) {
+            f = true;
+            return new MethodVisitorImpl(super.visitMethod(access, name, desc, signature, exceptions));
+        } else return super.visitMethod(access, name, desc, signature, exceptions);
+    }
+
 
     private static class MethodVisitorImpl extends MethodVisitor {
         private boolean f = false;
@@ -61,4 +50,5 @@ public class CnpcDataScriptNoticeTransformer implements IClassTransformer {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
         }
     }
+
 }

@@ -17,12 +17,34 @@ public class TransformHelper {
     public static byte[] saveDump(String name, byte[] bytes) {
         if (!loaded) {
             loaded = true;
-            String fileName = System.getProperty("mrmks.csf.saveDump", "").trim();
-            willSave = !fileName.equals("");
+            String fileName = System.getProperty("mrmks.csf.saveDump", null);
+            willSave = fileName != null;
             if (willSave) {
-                fileName = fileName.replace('/','\\');
-                if (fileName.endsWith(".class")) fileName = fileName.substring(0, fileName.lastIndexOf('\\'));
-                file = new File(fileName);
+                fileName = fileName.trim();
+                willSave = !fileName.equals("");
+                if (willSave) {
+                    fileName = fileName.replace('/','\\');
+                    if (fileName.endsWith(".class")) fileName = fileName.substring(0, fileName.lastIndexOf('\\'));
+                    file = new File(fileName);
+                    if (!file.exists()) {
+                        willSave = file.mkdirs();
+                        if (!willSave) {
+                            file = null;
+                            log.debug("Can't create dictionary \"" + fileName + "\", will not dump classes");
+                        }
+                    } else {
+                        willSave = !file.isFile();
+                        if (!willSave) {
+                            file = null;
+                            log.debug("Can't create directory \"dump\" since a \"dump\" already exists, will not dump classes");
+                        }
+                    }
+                } else {
+                    log.debug("Path is empty, will not dump class files");
+                }
+            } else {
+                log.debug("Property \"mrmks.csf.saveDump\" not defined, will not dump classes");
+                log.debug("Set it to a directory path to dump transformed classes");
             }
         }
         if (willSave) {

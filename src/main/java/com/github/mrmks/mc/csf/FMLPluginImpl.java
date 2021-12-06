@@ -14,12 +14,8 @@ public class FMLPluginImpl implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         TransformHelper.log = LogManager.getLogger("CnpcSaveFile");
-        return new String[]{
-                "com.github.mrmks.mc.csf.CnpcSaveFileTransformer",
-                "com.github.mrmks.mc.csf.JsonUtilCreateExceptionTransformer",
-                "com.github.mrmks.mc.csf.CnpcJsonExceptionTransformer",
-                "com.github.mrmks.mc.csf.CnpcWriteNBTOptional",
-                "com.github.mrmks.mc.csf.CnpcDataScriptNoticeTransformer"
+        return new String[] {
+                "com.github.mrmks.mc.csf.CnpcClassTransformer"
         };
     }
 
