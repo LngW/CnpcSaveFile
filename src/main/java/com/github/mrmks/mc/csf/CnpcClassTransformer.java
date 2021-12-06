@@ -42,13 +42,12 @@ public class CnpcClassTransformer implements IClassTransformer {
                 ClassWriter cw = new ClassWriter(cr ,0);
                 ClassVisitor cv = transList[i].build(ASM5, cw);
                 cr.accept(cv, 0);
-                TransformHelper.transformed(name);
-                return TransformHelper.saveDump(name, cw.toByteArray());
+
+                return TransformHelper.transformedSave(name, cw.toByteArray());
             }
         }
 
         return basicClass;
-
     }
 
     private interface TransformerBuilder {

@@ -28,24 +28,17 @@ public class TransformHelper {
                     file = new File(fileName);
                     if (!file.exists()) {
                         willSave = file.mkdirs();
-                        if (!willSave) {
-                            file = null;
-                            log.debug("Can't create dictionary \"" + fileName + "\", will not dump classes");
-                        }
+                        if (!willSave) log.debug("Can't create dictionary \"" + fileName + "\", will not dump classes");
                     } else {
                         willSave = !file.isFile();
-                        if (!willSave) {
-                            file = null;
-                            log.debug("Can't create directory \"dump\" since a \"dump\" already exists, will not dump classes");
-                        }
+                        if (!willSave) log.debug("Can't create directory \"dump\" since a \"dump\" FILE already exists, will not dump classes");
                     }
                 } else {
-                    log.debug("Path is empty, will not dump class files");
+                    log.debug("Property \"mrmks.csf.saveDump\" is empty, will not dump classes");
                 }
-            } else {
-                log.debug("Property \"mrmks.csf.saveDump\" not defined, will not dump classes");
-                log.debug("Set it to a directory path to dump transformed classes");
             }
+            if (willSave) log.debug("Property \"mrmks.csf.saveDump\" defined, will dump classes to \"" + file + "\"");
+            else file = null;
         }
         if (willSave) {
             String full = name.replace('.', '\\');
@@ -80,6 +73,11 @@ public class TransformHelper {
             }
         }
         return bytes;
+    }
+
+    static byte[] transformedSave(String name, byte[] bytes) {
+        transformed(name);
+        return saveDump(name, bytes);
     }
 
     static void transformed(String name) {
