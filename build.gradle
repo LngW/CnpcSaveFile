@@ -18,7 +18,7 @@ apply plugin: 'net.minecraftforge.gradle'
 
 version = "0.0.6a"
 group = "com.github.mrmks.mc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "NpcSaveFile"
+archivesBaseName = "CnpcSaveFile"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 //sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -68,7 +68,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2856'
     testCompile 'junit:junit:4.13.2'
     compileOnly 'org.jetbrains:annotations:22.0.0'
     compileOnly fg.deobf('noppes.npcs:CustomNPCs_1.12.2:(05Jul20)')
