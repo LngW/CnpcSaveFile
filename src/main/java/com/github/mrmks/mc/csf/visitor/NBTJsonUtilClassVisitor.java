@@ -9,8 +9,8 @@ import static org.objectweb.asm.Opcodes.*;
 public class NBTJsonUtilClassVisitor extends ClassVisitor {
 
     private final boolean[] f = new boolean[]{false, false, false};
-    public NBTJsonUtilClassVisitor(ClassVisitor cv) {
-        super(ASM5, cv);
+    public NBTJsonUtilClassVisitor(int api, ClassVisitor cv) {
+        super(api, cv);
     }
 
     @Override

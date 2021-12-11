@@ -8,8 +8,8 @@ import static org.objectweb.asm.Opcodes.ASM5;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 
 public class EntityCustomNpcClassVisitor extends ClassVisitor {
-    public EntityCustomNpcClassVisitor(ClassVisitor cv) {
-        super(ASM5, cv);
+    public EntityCustomNpcClassVisitor(int api, ClassVisitor cv) {
+        super(api, cv);
     }
 
     private boolean f = false;

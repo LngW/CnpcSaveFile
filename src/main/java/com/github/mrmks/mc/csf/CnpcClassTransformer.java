@@ -18,11 +18,11 @@ public class CnpcClassTransformer implements IClassTransformer {
             "noppes.npcs.entity.data.DataScript"
     };
     private final TransformerBuilder[] transList = new TransformerBuilder[] {
-            (api, cv) -> new NBTJsonUtilClassVisitor(cv),
-            (api, cv) -> new JsonExceptionClassVisitor(cv),
-            (api, cv) -> new JsonUtilClassVisitor(cv),
-            (api, cv) -> new EntityCustomNpcClassVisitor(cv),
-            (api, cv) -> new DataScriptClassVisitor(cv)
+            NBTJsonUtilClassVisitor::new,
+            JsonExceptionClassVisitor::new,
+            JsonUtilClassVisitor::new,
+            EntityCustomNpcClassVisitor::new,
+            DataScriptClassVisitor::new
     };
     private final boolean[] passFlag = new boolean[nameList.length];
     private int count = 0;

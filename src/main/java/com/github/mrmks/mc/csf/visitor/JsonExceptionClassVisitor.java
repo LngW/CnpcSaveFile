@@ -7,8 +7,8 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
 public class JsonExceptionClassVisitor extends ClassVisitor {
-    public JsonExceptionClassVisitor(ClassVisitor cv) {
-        super(ASM5, cv);
+    public JsonExceptionClassVisitor(int api, ClassVisitor cv) {
+        super(api, cv);
     }
 
     @Override

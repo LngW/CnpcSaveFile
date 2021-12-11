@@ -7,8 +7,8 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
 public class JsonUtilClassVisitor extends ClassVisitor {
-    public JsonUtilClassVisitor(ClassVisitor cv) {
-        super(ASM5, cv);
+    public JsonUtilClassVisitor(int api, ClassVisitor cv) {
+        super(api, cv);
     }
 
     private boolean f = false;

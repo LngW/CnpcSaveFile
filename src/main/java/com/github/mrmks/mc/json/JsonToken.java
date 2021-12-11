@@ -18,23 +18,30 @@ public class JsonToken implements Closeable {
         this.reader = new StringReader(json);
     }
 
-    private int read() throws IOException {
-        return reader.read();
+    public int next() throws IOException {
+        return lastFlag ? last() : next0();
     }
 
-    public int next() throws IOException {
-        if (lastFlag) {
-            lastFlag = false;
-            return cache;
-        }
+    public int nextV() throws IOException {
+        int c = next();
+        while (c > -1 && (c < 32 || c == 127)) c = next0();
+        return c;
+    }
+
+    public int nextW() throws IOException {
+        int c = next();
+        while (c > -1 && (c < 33 || c == 127)) c = next0();
+        return c;
+    }
+
+    private int next0() throws IOException {
         if (cache == -2) return -1;
         else {
             int c = cache;
-            cache = read();
-            index ++;
-            if (cache == -1) {
-                cache = -2;
-            } else if (c == '\n' || c == '\r' && (cache == '\r' || cache != '\n')) {
+            cache = reader.read();
+            ++index;
+            if (cache == -1) cache = -2;
+            else if (c == '\n' || c == '\r' && (cache == '\r' || cache != '\n')) {
                 line += 1;
                 index = 0;
             }
@@ -42,36 +49,14 @@ public class JsonToken implements Closeable {
         }
     }
 
-    public int nextClean() throws IOException {
-        if (lastFlag) {
-            lastFlag = false;
-            return last();
-        } else {
-            int c = next();
-            while (c > -1 && (c < 32 || c == 127)) c = next();
-            return c;
-        }
-    }
-
-    public int nextCleanSpace() throws IOException {
-        if (lastFlag) {
-            lastFlag = false;
-            int c = last();
-            while (c > -1 && (c < 33 || c == 127)) c = next();
-            return c;
-        } else {
-            int c = next();
-            while (c > -1 && (c < 33 || c == 127)) c = next();
-            return c;
-        }
-    }
-
     private int last() {
+        lastFlag = false;
         return cache == -2 ? -1: cache;
     }
 
-    public void moveLast() {
+    public JsonToken back() {
         lastFlag = true;
+        return this;
     }
 
     public void close() throws IOException {

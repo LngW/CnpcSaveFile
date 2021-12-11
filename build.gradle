@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url = "https://files.minecraftforge.net/maven" }
+        maven { url = "https://maven.minecraftforge.net/" }
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "0.0.6a"
+version = "0.0.6b"
 group = "com.github.mrmks.mc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CnpcSaveFile"
 
@@ -68,10 +68,11 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2856'
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2858'
     testCompile 'junit:junit:4.13.2'
     compileOnly 'org.jetbrains:annotations:22.0.0'
     compileOnly fg.deobf('noppes.npcs:CustomNPCs_1.12.2:(05Jul20)')
+    testImplementation 'noppes.npcs:CustomNPCs_1.12.2:(05Jul20)'
     //testCompileOnly fg.deobf('noppes.npcs:CustomNPCs_1.12.2:(05Jul20)')
 }
 
