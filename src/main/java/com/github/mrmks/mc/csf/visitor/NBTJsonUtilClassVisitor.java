@@ -22,7 +22,7 @@ public class NBTJsonUtilClassVisitor extends ClassVisitor {
             Label label1 = new Label();
             mv.visitLabel(label0);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESTATIC, "com/github/mrmks/mc/json/JsonUtil", "LoadFile", "(Ljava/io/File;)Lnet/minecraft/nbt/NBTTagCompound;", false);
+            mv.visitMethodInsn(INVOKESTATIC, "com/github/mrmks/mc/injector/InjectorJsonUtil", "LoadFile", "(Ljava/io/File;)Lnet/minecraft/nbt/NBTTagCompound;", false);
             mv.visitInsn(ARETURN);
             mv.visitLabel(label1);
             mv.visitLocalVariable("file", "Ljava/io/File;",null,label0, label1, 0);
@@ -38,7 +38,7 @@ public class NBTJsonUtilClassVisitor extends ClassVisitor {
             mv.visitLabel(label0);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKESTATIC, "com/github/mrmks/mc/json/JsonUtil", "SaveFile", "(Ljava/io/File;Lnet/minecraft/nbt/NBTTagCompound;)V", false);
+            mv.visitMethodInsn(INVOKESTATIC, "com/github/mrmks/mc/injector/InjectorJsonUtil", "SaveFile", "(Ljava/io/File;Lnet/minecraft/nbt/NBTTagCompound;)V", false);
             mv.visitInsn(RETURN);
             mv.visitLabel(label1);
             mv.visitLocalVariable("file", "Ljava/io/File;", null, label0, label1, 0);
@@ -53,7 +53,7 @@ public class NBTJsonUtilClassVisitor extends ClassVisitor {
             Label label0 = new Label();
             mv.visitLabel(label0);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESTATIC, "com/github/mrmks/mc/json/JsonUtil","Convert", "(Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;", false);
+            mv.visitMethodInsn(INVOKESTATIC, "com/github/mrmks/mc/injector/InjectorJsonUtil","Convert", "(Ljava/lang/String;)Lnet/minecraft/nbt/NBTTagCompound;", false);
             mv.visitInsn(ARETURN);
             Label label1 = new Label();
             mv.visitLabel(label1);

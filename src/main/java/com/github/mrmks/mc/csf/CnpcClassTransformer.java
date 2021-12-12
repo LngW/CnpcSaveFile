@@ -13,14 +13,14 @@ public class CnpcClassTransformer implements IClassTransformer {
     private final String[] nameList = new String[]{
             "noppes.npcs.util.NBTJsonUtil",
             "noppes.npcs.util.NBTJsonUtil$JsonException",
-            "com.github.mrmks.mc.json.JsonUtil",
+            "com.github.mrmks.mc.injector.InjectorJsonUtil",
             "noppes.npcs.entity.EntityCustomNpc",
             "noppes.npcs.entity.data.DataScript"
     };
     private final TransformerBuilder[] transList = new TransformerBuilder[] {
             NBTJsonUtilClassVisitor::new,
             JsonExceptionClassVisitor::new,
-            JsonUtilClassVisitor::new,
+            InjectorJsonUtilClassVisitor::new,
             EntityCustomNpcClassVisitor::new,
             DataScriptClassVisitor::new
     };

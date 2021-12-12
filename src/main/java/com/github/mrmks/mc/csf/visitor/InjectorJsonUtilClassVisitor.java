@@ -6,8 +6,8 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class JsonUtilClassVisitor extends ClassVisitor {
-    public JsonUtilClassVisitor(int api, ClassVisitor cv) {
+public class InjectorJsonUtilClassVisitor extends ClassVisitor {
+    public InjectorJsonUtilClassVisitor(int api, ClassVisitor cv) {
         super(api, cv);
     }
 
@@ -24,13 +24,11 @@ public class JsonUtilClassVisitor extends ClassVisitor {
             mv.visitTypeInsn(NEW, "noppes/npcs/util/NBTJsonUtil$JsonException");
             mv.visitInsn(DUP);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKESPECIAL, "noppes/npcs/util/NBTJsonUtil$JsonException", "<init>", "(Ljava/lang/String;Lcom/github/mrmks/mc/json/JsonToken;)V", false);
+            mv.visitMethodInsn(INVOKESPECIAL, "noppes/npcs/util/NBTJsonUtil$JsonException", "<init>", "(Lcom/github/mrmks/mc/json/JsonUtil$JsonException;)V", false);
             mv.visitInsn(ARETURN);
             mv.visitLabel(label1);
-            mv.visitLocalVariable("msg", "Ljava/lang/String;", null, label0, label1, 0);
-            mv.visitLocalVariable("token", "Lcom/github/mrmks/mc/json/JsonToken;", null, label0, label1, 1);
-            mv.visitMaxs(4,2);
+            mv.visitLocalVariable("je", "Lcom/github/mrmks/mc/json/JsonUtil$JsonException;", null, label0, label1, 0);
+            mv.visitMaxs(3,1);
             mv.visitEnd();
             return null;
         }

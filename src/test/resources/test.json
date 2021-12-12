@@ -1,0 +1,22 @@
+{
+  "byte": 1b,
+  "short": 2s,
+  "int": 3,
+  "long": 4L,
+  "float": 5.1f,
+  "double": 6.21d,
+  "longArray": [L; 1L, -1L],
+  "intArray": [I; 1, -1],
+  "doubleList": [1.1d, -1.1d],
+  "string": "val\\\"ue",
+  "compound": {
+    "subInt": -1,
+    "subByte": -1b,
+    "subList": [
+      {
+        "listSubFloat": -1.1f,
+        "listSubByteArray": [B; -11B, 11B]
+      }
+    ]
+  }
+}
