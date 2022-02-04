@@ -15,14 +15,20 @@ public class CnpcClassTransformer implements IClassTransformer {
             "noppes.npcs.util.NBTJsonUtil$JsonException",
             "com.github.mrmks.mc.injector.InjectorJsonUtil",
             "noppes.npcs.entity.EntityCustomNpc",
-            "noppes.npcs.entity.data.DataScript"
+            "noppes.npcs.entity.data.DataScript",
+            "noppes.npcs.blocks.tiles.TileScripted",
+            "noppes.npcs.blocks.tiles.TileScriptedDoor",
+            "noppes.npcs.controllers.data.PlayerScriptData"
     };
     private final TransformerBuilder[] transList = new TransformerBuilder[] {
             NBTJsonUtilClassVisitor::new,
             JsonExceptionClassVisitor::new,
             InjectorJsonUtilClassVisitor::new,
             EntityCustomNpcClassVisitor::new,
-            DataScriptClassVisitor::new
+            DataScriptClassVisitor::new,
+            TileScriptedClassVisitor::new,
+            TileScriptedDoorClassVisitor::new,
+            PlayerScriptClassVisitor::new
     };
     private final boolean[] passFlag = new boolean[nameList.length];
     private int count = 0;

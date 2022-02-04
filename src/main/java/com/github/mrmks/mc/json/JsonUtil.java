@@ -9,16 +9,13 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class JsonUtil {
-    public static JsonException createException(String msg, JsonToken token) {
-        return new JsonException(msg, token);
-    }
 
     private static String toChar(int c) {
         return c == -1 ? "EOF" : new String(new char[]{'\'', (char) c, '\''});
     }
 
     public static NBTTagCompound fillCompound(JsonToken token, int depth) throws IOException, JsonException {
-        if (depth > 512) throw createException("Tried to read NBT tag with too high complexity, depth > 512", token);
+        if (depth > 512) throw new JsonException("Tried to read NBT tag with too high complexity, depth > 512", token);
         NBTTagCompound tag = new NBTTagCompound();
         int c = token.nextW();
         if (c != '}') {
@@ -26,14 +23,14 @@ public class JsonUtil {
             for (;;) {
                 String key = readStr(token, false);
                 c = token.nextW();
-                if (c != ':') throw createException("Expected ':', but found ".concat(toChar(c)), token);
+                if (c != ':') throw new JsonException("Expected ':', but found ".concat(toChar(c)), token);
 
                 NBTBase value = readValue(token, depth + 1);
                 tag.setTag(key, value);
                 c = token.nextW();
                 if (c == ',') continue;
                 if (c == '}') break;
-                else throw createException("Expected ',' or '}', but found ".concat(toChar(c)), token);
+                else throw new JsonException("Expected ',' or '}', but found ".concat(toChar(c)), token);
             }
         }
         return tag;
@@ -54,14 +51,14 @@ public class JsonUtil {
         int c = token.nextW();
         if (c == '\"') {
             int index = 0, c1;
-            while ((c = token.nextV()) != '\"') {
-                if (c == -1) throw createException("Expected '\"', but found EOF", token);
+            while ((c = token.next()) != '\"') {
+                if (c == -1) throw new JsonException("Expected '\"', but found EOF", token);
                 if (complex && c == '\\') {
-                    c1 = token.nextV();
+                    c1 = token.next();
                     if (c1 == '\"' || c1 == '\\') {
                         c = c1;
                     } else {
-                        throw createException("Expected '\\' or '\"', but found ".concat(toChar(c1)), token);
+                        throw new JsonException("Expected '\\' or '\"', but found ".concat(toChar(c1)), token);
                     }
                 }
                 ensureStrWorker(index);
@@ -69,12 +66,12 @@ public class JsonUtil {
             }
             return new String(keyWorker, 0, index);
         }
-        throw createException("Can't parse a string, expected '\"', but found ".concat(toChar(c)), token);
+        throw new JsonException("Can't parse a string, expected '\"', but found ".concat(toChar(c)), token);
     }
 
     private static NBTBase readValue(JsonToken token, int depth) throws IOException, JsonException {
         int c = token.nextW();
-        if (c == -1) throw createException("Found EOF while parsing value", token);
+        if (c == -1) throw new JsonException("Found EOF while parsing value", token);
         else if (c == '{') {
             // compound
             return fillCompound(token, depth + 1);
@@ -89,7 +86,7 @@ public class JsonUtil {
                         ByteArrayList list = new ByteArrayList();
                         parseNumberArray(token, 'B', ((l, tk) -> {
                             if (l > Byte.MAX_VALUE || l < Byte.MIN_VALUE)
-                                throw createException("'" + l + "' can't be parsed to byte", token);
+                                throw new JsonException("'" + l + "' can't be parsed to byte", token);
                             list.add((byte) l);
                         }));
                         return new NBTTagByteArray(list.toByteArray());
@@ -103,14 +100,14 @@ public class JsonUtil {
                         IntArrayList list = new IntArrayList();
                         parseNumberArray(token, 'I', (l,tk) -> {
                             if (l > Integer.MAX_VALUE || l < Integer.MIN_VALUE)
-                                throw createException("'" + l + "' can't be parsed to int", tk);
+                                throw new JsonException("'" + l + "' can't be parsed to int", tk);
                             list.add((int) l);
                         });
                         return new NBTTagIntArray(list.toIntArray());
                     }
-                } else throw createException("Expected ';' but found ".concat(toChar(c1)), token);
+                } else throw new JsonException("Expected ';' but found ".concat(toChar(c1)), token);
             } else {
-                if (depth > 512) throw createException("Tried to read NBT tag with too high complexity, depth > 512", token);
+                if (depth > 512) throw new JsonException("Tried to read NBT tag with too high complexity, depth > 512", token);
                 NBTTagList list = new NBTTagList();
                 if (c != ']') {
                     token.back();
@@ -120,7 +117,7 @@ public class JsonUtil {
                         c = token.nextW();
                         if (c == ',') continue;
                         if (c == ']') break;
-                        else throw createException("Expected ',' or ']', but found ".concat(toChar(c)), token);
+                        else throw new JsonException("Expected ',' or ']', but found ".concat(toChar(c)), token);
                     }
                 }
                 return list;
@@ -128,7 +125,7 @@ public class JsonUtil {
         } else if (c == '\"') {
             // string
             return new NBTTagString(readStr(token.back(), true));
-        } else {
+        } else if (c == '-' || c >= '0' && c <= '9') {
             // byte, short, int, float, long, double
             boolean minus = c == '-';
             long l = parseInteger(minus ? token : token.back(), false);
@@ -138,26 +135,31 @@ public class JsonUtil {
                 d = minus ? -d : d;
                 c = token.nextV();
                 switch (c) {
-                    case 'f': return new NBTTagFloat((float) d);
+                    case 'f':
+                        if (d > Float.MAX_VALUE || d < Float.MIN_NORMAL)
+                        return new NBTTagFloat((float) d);
                     case 'd': return new NBTTagDouble(d);
-                    case -1: throw createException("Found EOF while parsing float number", token);
-                    default: throw createException("Unexpected suffix ".concat(toChar(c)), token);
+                    case -1: throw new JsonException("Found EOF while parsing float number", token);
+                    default: throw new JsonException("Unexpected suffix ".concat(toChar(c)), token);
                 }
             } else {
                 l = minus ? -l : l;
                 switch (c) {
                     case 'b':
+                        if (l < Byte.MIN_VALUE || l > Byte.MAX_VALUE) throw new JsonException("Can't parse " + l + " to byte", token);
                         return new NBTTagByte((byte) l);
                     case 's':
+                        if (l < Short.MIN_VALUE || l > Short.MAX_VALUE) throw new JsonException("Can't parse " + l + " to short", token);
                         return new NBTTagShort((short) l);
                     case 'L':
                         return new NBTTagLong(l);
                     default:
                         token.back();
+                        if (l <= Integer.MIN_VALUE || l >= Integer.MAX_VALUE) throw new JsonException("Can't parse " + l + " to int", token);
                         return new NBTTagInt((int) l);
                 }
             }
-        }
+        } else throw new JsonException("Unexpected content", token);
     }
 
     private static long parseInteger(JsonToken tk, boolean readMinus) throws IOException, JsonException {
@@ -170,9 +172,9 @@ public class JsonUtil {
             c = tk.nextV();
         }
         if (c >= '0' && c <= '9') prefix = c - '0';
-        else throw createException("Unexpected char " + toChar(c) + " while parsing a number", tk);
+        else throw new JsonException("Unexpected char " + toChar(c) + " while parsing a number", tk);
 
-        while ((c = tk.nextV()) >= '0' && c <= '9') prefix = prefix * 10 + (c - '0');
+        while ((c = tk.nextV()) >= '0' && c <= '9') prefix = (prefix << 3) + (prefix << 1) + (c - '0');
 
         tk.back();
         return minus ? -prefix : prefix;
@@ -181,16 +183,16 @@ public class JsonUtil {
     private static double parseFloat(JsonToken tk) throws IOException, JsonException {
         int c = tk.nextV();
         if (c >= '0' && c <= '9') {
-            double prefix = c - '0';
+            long prefix = c - '0';
             long bt = 10;
             while ((c = tk.nextV()) >= '0' && c <= '9') {
-                prefix = prefix * 10 + c - '0';
-                bt *= 10;
+                prefix = (prefix << 3) + (prefix << 1) + c - '0';
+                bt = (bt << 3) + (bt << 1);
             }
 
             tk.back();
-            return prefix / bt;
-        } else throw createException("Found EOF while parsing a number", tk);
+            return (double) prefix / bt;
+        } else throw new JsonException("Found EOF while parsing a number", tk);
     }
 
     private static void parseNumberArray(JsonToken tk, char suffix, LongFunc func) throws IOException, JsonException {
@@ -198,7 +200,7 @@ public class JsonUtil {
             long n = parseInteger(tk, true);
             int c = tk.nextV();
             if (suffix == 'B' || suffix == 'L') {
-                if (c != suffix) throw createException("Unexpected suffix ".concat(toChar(c)), tk);
+                if (c != suffix) throw new JsonException("Unexpected suffix ".concat(toChar(c)), tk);
                 c = tk.nextV();
             }
             if (c == ',') {
@@ -206,7 +208,7 @@ public class JsonUtil {
             } else if (c == ']') {
                 func.apply(n, tk);
                 break;
-            } else throw createException("Expected ',' or ']', but found ".concat(toChar(c)), tk);
+            } else throw new JsonException("Expected ',' or ']', but found ".concat(toChar(c)), tk);
         }
     }
 
@@ -220,7 +222,7 @@ public class JsonUtil {
                 token.close();
             } else {
                 token.close();
-                throw JsonUtil.createException("Expected '}' but found ".concat(toChar(c)), token);
+                throw new JsonException("Expected '}' but found ".concat(toChar(c)), token);
             }
         } catch (IOException | JsonException e) {
             token.close();
@@ -240,7 +242,7 @@ public class JsonUtil {
                 return tag;
             } else {
                 token.close();
-                throw JsonUtil.createException("Expected '}' but found ".concat(toChar(c)), token);
+                throw new JsonException("Expected '}' but found ".concat(toChar(c)), token);
             }
         } catch (IOException e) {
             // this should never happen
@@ -290,6 +292,16 @@ public class JsonUtil {
         try (Writer writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), StandardCharsets.UTF_8)) {
             writeTag(writer, compound, 0);
         }
+    }
+
+    /**
+     *  This method should only be used in test environment.
+     */
+    public static NBTBase convertFrom(String str) throws JsonException, IOException {
+        JsonToken tk = new JsonToken(str);
+        NBTBase tag = readValue(tk, 0);
+        tk.close();
+        return tag;
     }
 
     private interface LongFunc {

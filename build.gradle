@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "0.0.7a"
+version = "0.0.7-build12"
 group = "com.github.mrmks.mc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CnpcSaveFile"
 
@@ -72,7 +72,7 @@ dependencies {
     testCompile 'junit:junit:4.13.2'
     compileOnly 'org.jetbrains:annotations:22.0.0'
     compileOnly fg.deobf('noppes.npcs:CustomNPCs_1.12.2:(05Jul20)')
-    testImplementation 'noppes.npcs:CustomNPCs_1.12.2:(05Jul20)'
+    //testImplementation 'noppes.npcs:CustomNPCs_1.12.2:(05Jul20)'
 }
 
 //jar.finalizedBy('reobfJar')
