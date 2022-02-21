@@ -5,7 +5,7 @@
   "long": 4L,
   "float": 5.1f,
   "double": 6.21d,
-  "longArray": [L; 1L, -1L],
+  "longArray": [L; 1L, -1L, 11111111111111111L],
   "intArray": [I; 1, -1],
   "doubleList": [1.1d, -1.1d],
   "string": "val\\\"ue",

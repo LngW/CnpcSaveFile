@@ -127,77 +127,73 @@ public class JsonUtil {
             return new NBTTagString(readStr(token.back(), true));
         } else if (c == '-' || c >= '0' && c <= '9') {
             // byte, short, int, float, long, double
-            boolean minus = c == '-';
-            long l = parseInteger(minus ? token : token.back(), false);
-            c = token.nextV();
-            if (c == '.') {
-                double d = l + parseFloat(token);
-                d = minus ? -d : d;
-                c = token.nextV();
+            keyWorker[0] = (char) c;
+            int i = 1;
+
+            for (;;) {
+                c = token.next();
+                if ((c >= '0' && c <= '9') || c == '.' || c == 'E' || c == '-') {
+                    ensureStrWorker(i);
+                    keyWorker[i] = (char) c;
+                    i++;
+                } else break;
+            }
+
+            String str = new String(keyWorker, 0, i);
+
+            try {
                 switch (c) {
                     case 'f':
-                        if (d > Float.MAX_VALUE || d < Float.MIN_NORMAL)
-                        return new NBTTagFloat((float) d);
-                    case 'd': return new NBTTagDouble(d);
-                    case -1: throw new JsonException("Found EOF while parsing float number", token);
-                    default: throw new JsonException("Unexpected suffix ".concat(toChar(c)), token);
-                }
-            } else {
-                l = minus ? -l : l;
-                switch (c) {
+                        return new NBTTagFloat(Float.parseFloat(str));
+                    case 'd':
+                        return new NBTTagDouble(Double.parseDouble(str));
                     case 'b':
-                        if (l < Byte.MIN_VALUE || l > Byte.MAX_VALUE) throw new JsonException("Can't parse " + l + " to byte", token);
-                        return new NBTTagByte((byte) l);
+                        return new NBTTagByte(Byte.parseByte(str));
                     case 's':
-                        if (l < Short.MIN_VALUE || l > Short.MAX_VALUE) throw new JsonException("Can't parse " + l + " to short", token);
-                        return new NBTTagShort((short) l);
+                        return new NBTTagShort(Short.parseShort(str));
                     case 'L':
-                        return new NBTTagLong(l);
+                        return new NBTTagLong(Long.parseLong(str));
+                    case -1: throw new JsonException("Found EOF while parsing float number", token);
                     default:
                         token.back();
-                        if (l <= Integer.MIN_VALUE || l >= Integer.MAX_VALUE) throw new JsonException("Can't parse " + l + " to int", token);
-                        return new NBTTagInt((int) l);
+                        return new NBTTagInt(Integer.parseInt(str));
                 }
+            } catch (NumberFormatException e) {
+                token.back();
+                throw new JsonException("Unable to parse number", token, e);
             }
         } else throw new JsonException("Unexpected content", token);
     }
 
-    private static long parseInteger(JsonToken tk, boolean readMinus) throws IOException, JsonException {
+    private static long parseInteger(JsonToken tk) throws IOException, JsonException {
         int c = tk.nextW();
         long prefix;
         boolean minus = false;
 
-        if (readMinus && c == '-') {
-            minus = true;
-            c = tk.nextV();
-        }
-        if (c >= '0' && c <= '9') prefix = c - '0';
-        else throw new JsonException("Unexpected char " + toChar(c) + " while parsing a number", tk);
-
-        while ((c = tk.nextV()) >= '0' && c <= '9') prefix = (prefix << 3) + (prefix << 1) + (c - '0');
-
-        tk.back();
-        return minus ? -prefix : prefix;
-    }
-
-    private static double parseFloat(JsonToken tk) throws IOException, JsonException {
-        int c = tk.nextV();
-        if (c >= '0' && c <= '9') {
-            long prefix = c - '0';
-            long bt = 10;
-            while ((c = tk.nextV()) >= '0' && c <= '9') {
-                prefix = (prefix << 3) + (prefix << 1) + c - '0';
-                bt = (bt << 3) + (bt << 1);
+        keyWorker[0] = (char) c;
+        int i = 1;
+        for (;;) {
+            c = tk.next();
+            if (c >= '0' && c <= '9') {
+                ensureStrWorker(i);
+                keyWorker[i] = (char) c;
+                i++;
+            } else {
+                break;
             }
-
-            tk.back();
-            return (double) prefix / bt;
-        } else throw new JsonException("Found EOF while parsing a number", tk);
+        }
+        tk.back();
+        try {
+            prefix = Long.parseLong(new String(keyWorker, 0, i));
+        } catch (NumberFormatException e) {
+            throw new JsonException("Unable to parse the number", tk, e);
+        }
+        return prefix;
     }
 
     private static void parseNumberArray(JsonToken tk, char suffix, LongFunc func) throws IOException, JsonException {
         for (;;) {
-            long n = parseInteger(tk, true);
+            long n = parseInteger(tk);
             int c = tk.nextV();
             if (suffix == 'B' || suffix == 'L') {
                 if (c != suffix) throw new JsonException("Unexpected suffix ".concat(toChar(c)), tk);
@@ -311,6 +307,10 @@ public class JsonUtil {
     public static class JsonException extends Exception {
         JsonException(String msg, JsonToken tk) {
             super(msg + ": " + tk.curPosMessage());
+        }
+
+        JsonException(String msg, JsonToken tk, Throwable cause) {
+            super(msg + ": " + tk.curPosMessage(), cause);
         }
     }
 }
