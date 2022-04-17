@@ -19,7 +19,8 @@ public class CnpcClassTransformer implements IClassTransformer {
             "noppes.npcs.blocks.tiles.TileScripted",
             "noppes.npcs.blocks.tiles.TileScriptedDoor",
             "noppes.npcs.controllers.data.PlayerScriptData",
-            "noppes.npcs.controllers.data.PlayerData"
+            "noppes.npcs.controllers.data.PlayerData",
+            "noppes.npcs.CustomNpcs"
     };
     private final TransformerBuilder[] transList = new TransformerBuilder[] {
             NBTJsonUtilClassVisitor::new,
@@ -30,7 +31,8 @@ public class CnpcClassTransformer implements IClassTransformer {
             TileScriptedClassVisitor::new,
             TileScriptedDoorClassVisitor::new,
             PlayerScriptClassVisitor::new,
-            PlayerDataClassVisitor::new
+            PlayerDataClassVisitor::new,
+            CustomNpcsClassVisitor::new
     };
     private final boolean[] passFlag = new boolean[nameList.length];
     private int count = 0;

@@ -12,12 +12,25 @@ public class TileScriptedClassVisitor extends ClassVisitor {
         super(api, cv);
     }
 
-    private boolean f = false;
+    private boolean f_notice = false;
+    private boolean f_setNbt = false;
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        if (!f && "noticeString".equals(name)) {
-            f = true;
+        if (!f_notice && "noticeString".equals(name)) {
+            f_notice = true;
             return new TileScriptedClassVisitor.MethodVisitorImpl(super.visitMethod(access, name, desc, signature, exceptions));
+        } else if (!f_setNbt && "setNBT".equals(name)) {
+            f_setNbt = true;
+            return new MethodVisitor(api, visitMethod(access, name, desc, signature, exceptions)) {
+                @Override
+                public void visitCode() {
+                    super.visitCode();
+                    super.visitVarInsn(ALOAD, 0);
+                    super.visitMethodInsn(INVOKEVIRTUAL,
+                            "net/minecraft/tileentity/TileEntity",
+                            FMLLaunchHandler.isDeobfuscatedEnvironment() ? "markDirty" : "func_70296_d", "()V", false);
+                }
+            };
         } else return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
