@@ -45,24 +45,16 @@ public class CnpcClassTransformer implements IClassTransformer {
     private final String[] nameListServer = new String[]{};
     private final TransformerBuilder[] transListServer = new TransformerBuilder[]{};
 
-    private boolean[] passFlag = null;
-    private int count = 0;
-    private boolean pass = false;
+    private final boolean isClient = FMLLaunchHandler.side().isClient();
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
 
-        if (passFlag == null) {
-            int ext = FMLLaunchHandler.side().isClient() ? nameListClient.length : nameListServer.length;
-            passFlag = new boolean[ext + nameList.length];
-        }
-
-        if (pass) return basicClass;
-
+        // since the LaunchClassLoader go through all transformers, it should be ok if we compare our targets.
+        // besides, to be compatible with SpongePowered Mixin, we should make sure that
+        // the class have the same structure after it goes through this transformer multiple times.
         for (int i = 0; i < nameList.length; i++) {
-            if (!passFlag[i] && nameList[i].equals(name)) {
-                passFlag[i] = true;
-                pass = ++count == passFlag.length;
+            if (nameList[i].equals(name)) {
 
                 ClassReader cr = new ClassReader(basicClass);
                 ClassWriter cw = new ClassWriter(cr ,0);
@@ -73,12 +65,10 @@ public class CnpcClassTransformer implements IClassTransformer {
             }
         }
 
-        String[] names = FMLLaunchHandler.side().isClient() ? nameListClient : nameListServer;
-        TransformerBuilder[] builders = FMLLaunchHandler.side().isClient() ? transListClient : transListServer;
+        String[] names = isClient ? nameListClient : nameListServer;
+        TransformerBuilder[] builders = isClient ? transListClient : transListServer;
         for (int i = 0; i < names.length; i++) {
-            if (!passFlag[i + nameList.length] && names[i].equals(name)) {
-                passFlag[i + nameList.length] = true;
-                pass = ++count == passFlag.length;
+            if (names[i].equals(name)) {
 
                 ClassReader cr = new ClassReader(basicClass);
                 ClassWriter cw = new ClassWriter(cr ,0);
