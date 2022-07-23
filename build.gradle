@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "0.0.13-build18"
+version = "0.0.15-build20"
 group = "com.github.mrmks.mc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CnpcSaveFile"
 
@@ -65,6 +65,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     flatDir { dirs 'libs' }
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
