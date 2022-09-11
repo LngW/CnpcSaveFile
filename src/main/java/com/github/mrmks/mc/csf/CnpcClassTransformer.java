@@ -3,7 +3,6 @@ package com.github.mrmks.mc.csf;
 import com.github.mrmks.mc.csf.visitor.*;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -34,7 +33,8 @@ public class CnpcClassTransformer implements IClassTransformer {
             "noppes.npcs.blocks.BlockBuilder",
             "noppes.npcs.blocks.BlockCopy",
             "noppes.npcs.blocks.BlockScriptedDoor",
-            "noppes.npcs.blocks.BlockScripted"
+            "noppes.npcs.blocks.BlockScripted",
+            "noppes.npcs.roles.JobChunkLoader"
     };
     private final TransformerBuilder[] transList = new TransformerBuilder[] {
             NBTJsonUtilClassVisitor::new,
@@ -58,7 +58,8 @@ public class CnpcClassTransformer implements IClassTransformer {
             BlockBuilderClassVisitor::new,
             BlockBuilderClassVisitor::new,
             BlockScriptedDoorClassVisitor::new,
-            BlockScriptedClassVisitor::new
+            BlockScriptedClassVisitor::new,
+            JobChunkLoaderClassVisitor::new
     };
     private final String[] nameListClient = new String[] {
             "noppes.npcs.client.layer.LayerInterface",
