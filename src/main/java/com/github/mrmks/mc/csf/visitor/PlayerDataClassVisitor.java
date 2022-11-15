@@ -1,5 +1,6 @@
 package com.github.mrmks.mc.csf.visitor;
 
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -155,7 +156,7 @@ public class PlayerDataClassVisitor extends ClassVisitor {
                 mv.visitLabel(label5);
                 mv.visitFrame(F_SAME, 0, null, 0, null);
                 mv.visitVarInsn(ALOAD, 2);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "copy", "()Lnet/minecraft/nbt/NBTTagCompound;", false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", FMLLaunchHandler.isDeobfuscatedEnvironment() ? "copy" : "func_74737_b", "()Lnet/minecraft/nbt/NBTTagCompound;", false);
                 mv.visitVarInsn(ASTORE, 2);
                 mv.visitJumpInsn(GOTO, label);
                 mv.visitLabel(label6);
