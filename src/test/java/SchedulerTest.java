@@ -1,18 +1,43 @@
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SchedulerTest {
     @Test
     public void testScheduler() throws InterruptedException {
 
-        UUID uuid = UUID.nameUUIDFromBytes("".getBytes(StandardCharsets.UTF_8));
-        System.out.println(uuid);
+        /*
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.schedule(() -> System.out.println(Thread.currentThread().getName()), 0, TimeUnit.MILLISECONDS);
 
-        uuid = UUID.fromString("c9c843f8-4cb1-4c82-aa61-e264291b7bd6");
+        Thread.sleep(50);
+         */
 
-        System.out.println(uuid);
+        File file = new File("con");
+        file.mkdir();
 
+        Assert.assertFalse(file.exists());
+        Runnable runnable = () -> {
+            try {
+                InputStream stream = new FileInputStream(file);
+                stream.read();
+            } catch (Throwable tr) {}
+        };
+
+        Thread thread = new Thread(runnable);
+
+        thread.start();
+
+        Thread.sleep(10);
+
+        thread.interrupt();
+
+        Thread.sleep(10);
     }
 }

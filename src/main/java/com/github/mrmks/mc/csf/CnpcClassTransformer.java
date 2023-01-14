@@ -35,8 +35,7 @@ public class CnpcClassTransformer implements IClassTransformer {
             "noppes.npcs.blocks.BlockScriptedDoor",
             "noppes.npcs.blocks.BlockScripted",
             "noppes.npcs.roles.JobChunkLoader",
-            "noppes.npcs.entity.EntityNPCInterface",
-            "noppes.npcs.NoppesUtilServer$1"
+            "noppes.npcs.entity.EntityNPCInterface"
     };
     private final TransformerBuilder[] transList = new TransformerBuilder[] {
             NBTJsonUtilClassVisitor::new,
@@ -62,8 +61,7 @@ public class CnpcClassTransformer implements IClassTransformer {
             BlockScriptedDoorClassVisitor::new,
             BlockScriptedClassVisitor::new,
             JobChunkLoaderClassVisitor::new,
-            EntityNPCInterfaceClassVisitor::new,
-            NoppesUtilsServer$1ClassVisitor::new
+            EntityNPCInterfaceClassVisitor::new
     };
     private final String[] nameListClient = new String[] {
             "noppes.npcs.client.layer.LayerInterface",
