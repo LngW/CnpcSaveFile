@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "0.0.19-build27"
+version = "0.2.1-build28"
 group = "com.github.mrmks.mc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CnpcSaveFile"
 
@@ -39,6 +39,7 @@ minecraft {
 
             property 'mrmks.csf.saveDump', 'D:\\Workspaces\\Minecraft\\CnpcSaveFile\\dump\\'
 
+            args '--username', 'miuela'
         }
 
         server {
