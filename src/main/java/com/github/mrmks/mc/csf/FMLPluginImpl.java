@@ -21,7 +21,7 @@ public class FMLPluginImpl implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
-        return null;
+        return "com.github.mrmks.mc.csf.CSFModContainer";
     }
 
     @Nullable
