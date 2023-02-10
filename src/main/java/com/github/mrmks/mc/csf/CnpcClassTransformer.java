@@ -38,7 +38,9 @@ public class CnpcClassTransformer implements IClassTransformer {
             "noppes.npcs.entity.EntityNPCInterface",
             "noppes.npcs.entity.data.DataDisplay",
             "noppes.npcs.controllers.ScriptContainer",
-            "noppes.npcs.Server"
+            "noppes.npcs.Server",
+            "noppes.npcs.command.CmdClone",
+            "noppes.npcs.controllers.ServerCloneController"
     };
     private final TransformerBuilder[] transList = new TransformerBuilder[] {
             NBTJsonUtilClassVisitor::new,
@@ -67,7 +69,9 @@ public class CnpcClassTransformer implements IClassTransformer {
             EntityNPCInterfaceClassVisitor::new,
             DataDisplayClassVisitor::new,
             ScriptContainerClassVisitor::new,
-            ServerClassVisitor::new
+            ServerClassVisitor::new,
+            CmdCloneClassVisitor::new,
+            ServerCloneControllerClassVisitor::new
     };
     private final String[] nameListClient = new String[] {
             "noppes.npcs.client.layer.LayerInterface",
