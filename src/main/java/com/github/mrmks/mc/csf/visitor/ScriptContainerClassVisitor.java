@@ -64,7 +64,16 @@ public class ScriptContainerClassVisitor extends ClassVisitor {
                         super.visitMethodInsn(opcode, "java/io/StringWriter", name, desc, itf);
                         return;
                     }
+
                     super.visitMethodInsn(opcode, owner, name, desc, itf);
+
+                    if ("noppes/npcs/NoppesUtilServer".equals(owner) && "NotifyOPs".equals(name)) {
+                        super.visitVarInsn(Opcodes.ALOAD, 0);
+                        super.visitFieldInsn(Opcodes.GETFIELD, "noppes/npcs/controllers/ScriptContainer", "handler", "Lnoppes/npcs/controllers/IScriptHandler;");
+                        super.visitMethodInsn(Opcodes.INVOKEINTERFACE, "noppes/npcs/controllers/IScriptHandler", "noticeString", "()Ljava/lang/String;", true);
+                        super.visitVarInsn(Opcodes.ALOAD, 6);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "throwing", "(Ljava/lang/Object;Ljava/lang/Throwable;)V", false);
+                    }
                 }
             };
         }
