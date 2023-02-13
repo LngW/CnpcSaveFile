@@ -68,11 +68,78 @@ public class ScriptContainerClassVisitor extends ClassVisitor {
                     super.visitMethodInsn(opcode, owner, name, desc, itf);
 
                     if ("noppes/npcs/NoppesUtilServer".equals(owner) && "NotifyOPs".equals(name)) {
+                        super.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+                        super.visitInsn(Opcodes.DUP);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
                         super.visitVarInsn(Opcodes.ALOAD, 0);
                         super.visitFieldInsn(Opcodes.GETFIELD, "noppes/npcs/controllers/ScriptContainer", "handler", "Lnoppes/npcs/controllers/IScriptHandler;");
                         super.visitMethodInsn(Opcodes.INVOKEINTERFACE, "noppes/npcs/controllers/IScriptHandler", "noticeString", "()Ljava/lang/String;", true);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitLdcInsn(" script errored");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
                         super.visitVarInsn(Opcodes.ALOAD, 6);
                         super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "throwing", "(Ljava/lang/Object;Ljava/lang/Throwable;)V", false);
+
+                        // engine name
+                        super.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+                        super.visitInsn(Opcodes.DUP);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+                        super.visitLdcInsn("Engine name is: ");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitVarInsn(Opcodes.ALOAD, 0);
+                        super.visitFieldInsn(Opcodes.GETFIELD, "noppes/npcs/controllers/ScriptContainer", "currentScriptLanguage", "Ljava/lang/String;");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "error", "(Ljava/lang/Object;)V", false);
+
+                        // full code
+                        super.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+                        super.visitInsn(Opcodes.DUP);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+                        super.visitLdcInsn("Full code is as below: \n");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitVarInsn(Opcodes.ALOAD, 0);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "noppes/npcs/controllers/ScriptContainer", "getFullCode", "()Ljava/lang/String;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "error", "(Ljava/lang/Object;)V", false);
+                    } else if ("javax/script/ScriptEngine".equals(owner) && "eval".equals(name)) {
+                        super.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+                        super.visitInsn(Opcodes.DUP);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+                        super.visitVarInsn(Opcodes.ALOAD, 0);
+                        super.visitFieldInsn(Opcodes.GETFIELD, "noppes/npcs/controllers/ScriptContainer", "handler", "Lnoppes/npcs/controllers/IScriptHandler;");
+                        super.visitMethodInsn(Opcodes.INVOKEINTERFACE, "noppes/npcs/controllers/IScriptHandler", "noticeString", "()Ljava/lang/String;", true);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitLdcInsn(" script initialized");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "info", "(Ljava/lang/Object;)V", false);
+
+                        // engine name
+                        super.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+                        super.visitInsn(Opcodes.DUP);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+                        super.visitLdcInsn("Engine name is: ");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitVarInsn(Opcodes.ALOAD, 0);
+                        super.visitFieldInsn(Opcodes.GETFIELD, "noppes/npcs/controllers/ScriptContainer", "currentScriptLanguage", "Ljava/lang/String;");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "debug", "(Ljava/lang/String;)V", false);
+
+                        // full code
+                        super.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
+                        super.visitInsn(Opcodes.DUP);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
+                        super.visitLdcInsn("Full code is as below: \n");
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitVarInsn(Opcodes.ALOAD, 0);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, "noppes/npcs/controllers/ScriptContainer", "getFullCode", "()Ljava/lang/String;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+                        super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "debug", "(Ljava/lang/String;)V", false);
                     }
                 }
             };
