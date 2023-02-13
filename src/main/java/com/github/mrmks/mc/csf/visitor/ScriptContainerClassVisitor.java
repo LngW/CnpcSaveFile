@@ -115,7 +115,7 @@ public class ScriptContainerClassVisitor extends ClassVisitor {
                         super.visitLdcInsn(" script initialized");
                         super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
                         super.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "info", "(Ljava/lang/Object;)V", false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "noppes/npcs/LogWriter", "debug", "(Ljava/lang/String;)V", false);
 
                         // engine name
                         super.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder");
